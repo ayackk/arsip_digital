@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\Arsips\Pages;
+namespace App\Filament\Admin\Resources\Arsips\Pages;
 
-use App\Filament\Resources\Arsips\ArsipResource;
+use App\Filament\Admin\Resources\Arsips\ArsipResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 

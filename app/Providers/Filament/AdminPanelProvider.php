@@ -24,8 +24,10 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
+            ->default()
             ->id('admin')
             ->path('admin')
+            ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -38,6 +40,9 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
+                \App\Filament\Admin\Widgets\ArsipStats::class,
+                \App\Filament\Admin\Widgets\ArsipChart::class,
+                \App\Filament\Admin\Widgets\ArsipTerbaru::class,
             ])
             ->middleware([
                 EncryptCookies::class,

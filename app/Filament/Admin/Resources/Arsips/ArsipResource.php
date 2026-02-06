@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Resources\Arsips;
+namespace App\Filament\Admin\Resources\Arsips;
 
-use App\Filament\Resources\Arsips\Pages\CreateArsip;
-use App\Filament\Resources\Arsips\Pages\EditArsip;
-use App\Filament\Resources\Arsips\Pages\ListArsips;
-use App\Filament\Resources\Arsips\Schemas\ArsipForm;
-use App\Filament\Resources\Arsips\Tables\ArsipsTable;
-use App\Models\Arsip;
+use App\Filament\Admin\Resources\Arsips\Pages\CreateArsip;
+use App\Filament\Admin\Resources\Arsips\Pages\EditArsip;
+use App\Filament\Admin\Resources\Arsips\Pages\ListArsips;
+use App\Filament\Admin\Resources\Arsips\Schemas\ArsipForm;
+use App\Filament\Admin\Resources\Arsips\Tables\ArsipsTable;
+use App\Models\ArsipDokumen;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -16,7 +16,7 @@ use Filament\Tables\Table;
 
 class ArsipResource extends Resource
 {
-    protected static ?string $model = Arsip::class;
+    protected static ?string $model = ArsipDokumen::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 

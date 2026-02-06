@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\Arsips\Pages;
+namespace App\Filament\Admin\Resources\Arsips\Pages;
 
-use App\Filament\Resources\Arsips\ArsipResource;
+use App\Filament\admin\Resources\Arsips\ArsipResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateArsip extends CreateRecord

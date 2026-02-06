@@ -1,31 +1,26 @@
 <?php
 
-namespace App\Filament\Resources\Arsips\Tables;
+namespace App\Filament\Admin\Resources\JenisArsips\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\DeleteAction;
-use Illuminate\Support\Facades\Auth;
 
-class ArsipsTable
+class JenisArsipsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('nama_file')->searchable(),
-                TextColumn::make('kategori')->badge(),
-                TextColumn::make('user.name')
-                    ->label('Pengunggah')
-                    ->visible(fn () => Auth::user()->role === 'admin'),
-                TextColumn::make('created_at')->dateTime(),
-            ])
-            ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                TextColumn::make('nama_jenis')
+                    ->label('Nama Jenis')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
+                    ->dateTime(),
             ])
             ->filters([
                 //

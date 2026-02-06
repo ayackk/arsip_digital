@@ -24,7 +24,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
-        'role', // 'admin' atau 'pegawai'
+        'role', // 'admin', 'pegawai'
     ];
 
     /**
@@ -41,7 +41,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function arsips(): HasMany
     {
-        return $this->hasMany(Arsip::class, 'user_id', 'id');
+        return $this->hasMany(ArsipDokumen::class, 'created_by', 'id');
     }
 
     /**

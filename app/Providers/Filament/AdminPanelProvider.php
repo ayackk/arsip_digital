@@ -24,11 +24,27 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id('admin')
-            ->path('admin')
-            ->colors([
-                'primary' => Color::Amber,
-            ])
+        ->default()
+        ->id('admin')
+        ->path('admin')
+        ->login()
+        // Ganti teks Laravel jadi logo
+        ->brandLogo(asset('images/logo.png'))
+        ->brandLogoHeight('3rem')
+        
+        // Gunakan Render Hook untuk menyisipkan CSS
+        ->renderHook(
+            'panels::auth.login.form.before',
+            fn () => new \Illuminate\Support\HtmlString('
+                <style>
+                    h1.fi-header-title { display: none !important; }
+                </style>
+            '),
+        )
+        
+        ->colors([
+            'primary' => '#2f5f5e',
+        ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
             ->pages([

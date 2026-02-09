@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('posisi_lemari'); // Contoh: Rak 5
             $table->string('posisi_rak'); // Contoh: TA-001
             $table->string('baris'); // Contoh: Laci 3
+            $table->foreignId('opd_id')->nullable()->constrained('opd');
             $table->timestamps();
         });
     }

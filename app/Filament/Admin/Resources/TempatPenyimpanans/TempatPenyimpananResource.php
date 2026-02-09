@@ -13,6 +13,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class TempatPenyimpananResource extends Resource
 {
@@ -36,6 +38,20 @@ class TempatPenyimpananResource extends Resource
             //
         ];
     }
+
+        public static function getEloquentQuery(): Builder
+    {
+    $query = parent::getEloquentQuery();
+    $user = Auth::user();
+
+    // Jika yang login adalah operator, filter hanya data milik OPD-nya
+    if ($user->role === 'operator') {
+        $query->where('opd_id', $user->opd_id);
+    }
+
+    return $query;
+    }
+
 
     public static function getPages(): array
     {

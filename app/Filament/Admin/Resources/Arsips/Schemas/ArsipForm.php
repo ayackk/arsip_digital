@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Database\Eloquent\Builder;
 
 class ArsipForm
 {
@@ -24,13 +25,27 @@ public static function configure (Schema $schema): Schema
                     ->required(),
 
                 Select::make('unit_pengolah_id')
-                    ->relationship('unitPengolah', 'nama_unit')
+                    ->relationship('unitPengolah', 'nama_unit',
+                    modifyQueryUsing: fn (Builder $query) => $query->where('opd_id', Auth::user()->opd_id)
+                    )
                     ->required()
                     ->preload()
                     ->searchable(),
 
+                Select::make('opd_id')
+                    ->label('Asal OPD')
+                    ->relationship('opd', 'nama_opd')
+                    ->default(Auth::user() ? Auth::user()->opd_id : null) // Otomatis terisi OPD si user
+                    ->disabled(fn () => Auth::user() && Auth::user()->role === 'operator') // Operator gak bisa ganti-ganti
+                    ->dehydrated() // Tetap simpan nilai ke database meskipun di-disable
+                    ->searchable()
+                    ->preload()
+                    ->required(),
+
                 Select::make('jenis_arsip_id')
-                    ->relationship('jenisArsip', 'nama_jenis')
+                    ->relationship('jenisArsip', 'nama_jenis',
+                    modifyQueryUsing: fn (Builder $query) => $query->where('opd_id', Auth::user()->opd_id)
+                    )
                     ->required()
                     ->preload(),
 
@@ -38,8 +53,9 @@ public static function configure (Schema $schema): Schema
                     ->label('Tempat Penyimpanan')
                     ->relationship(
                         name: 'penyimpanan',
-                        titleAttribute: 'nama_ruangan'
-                    )
+                        titleAttribute: 'nama_ruangan',
+                        modifyQueryUsing: fn (Builder $query) => $query->where('opd_id', Auth::user()->opd_id)
+                )
                     ->getOptionLabelFromRecordUsing(fn ($record) =>
                         "{$record->nama_ruangan} | Lemari {$record->posisi_lemari} | Rak {$record->posisi_rak} | Baris {$record->baris}"
                     )
@@ -54,6 +70,7 @@ public static function configure (Schema $schema): Schema
                 FileUpload::make('lokasi_file')
                     ->label('Dokumen Digital (PDF)')
                     ->directory('arsip-digital')
+                    ->disk('public')
                     ->required()
                     ->acceptedFileTypes([
                         'application/pdf',
@@ -62,6 +79,7 @@ public static function configure (Schema $schema): Schema
                         'application/vnd.ms-excel',
                         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' // Untuk .xlsx'
                     ])
+                    ->preserveFilenames() // Opsional: biar nama filenya gak jadi kode acak
                     // Hapus Type Hinting (TemporaryUploadedFile) biar nggak error
                     ->afterStateUpdated(function ($state, callable $set) {
                         // Cek apakah $state adalah objek file sementara

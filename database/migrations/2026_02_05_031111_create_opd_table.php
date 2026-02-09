@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('unit_pengolah', function (Blueprint $table) {
+        Schema::create('opd', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_unit'); // Contoh: Bidang Kepegawaian, Sekretariat
-            $table->foreignId('opd_id')->nullable()->constrained('opd');
+            $table->string('nama_opd');
             $table->timestamps();
         });
     }
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('unit_pengolah');
+        Schema::dropIfExists('opd');
     }
 };

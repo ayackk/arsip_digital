@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -24,7 +25,8 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
-        'role', // 'admin', 'pegawai'
+        'role', // 'admin','operator','pegawai'
+        'opd_id',
     ];
 
     /**
@@ -43,6 +45,12 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(ArsipDokumen::class, 'created_by', 'id');
     }
+
+    /**
+     * Relasi ke model OPD
+     * Satu user bisa memiliki satu OPD
+     */
+    public function opd(): BelongsTo { return $this->belongsTo(Opd::class, 'opd_id'); }
 
     /**
      * Syarat user bisa login ke Filament

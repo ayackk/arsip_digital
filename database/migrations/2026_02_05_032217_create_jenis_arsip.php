@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('jenis_arsip', function (Blueprint $table) {
             $table->id();
             $table->string('nama_jenis'); // Contoh: Surat Masuk, Surat Keluar
+            $table->foreignId('opd_id')->nullable()->constrained('opd');
             $table->timestamps();
           });
     }

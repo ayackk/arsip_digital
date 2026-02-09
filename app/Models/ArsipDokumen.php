@@ -15,6 +15,7 @@ class ArsipDokumen extends Model
         'judul_arsip',
         'nomor_naskah_dinas',
         'tanggal_naskah',
+        'opd_id',
         'unit_pengolah_id',
         'jenis_arsip_id',
         'penyimpanan_id',
@@ -28,6 +29,7 @@ class ArsipDokumen extends Model
 
     // Relasi ke Master Data
     public function unitPengolah(): BelongsTo { return $this->belongsTo(UnitPengolah::class, 'unit_pengolah_id'); }
+    public function opd(): BelongsTo { return $this->belongsTo(Opd::class, 'opd_id'); }
     public function jenisArsip(): BelongsTo { return $this->belongsTo(JenisArsip::class, 'jenis_arsip_id'); }
     public function creator(): BelongsTo { return $this->belongsTo(User::class, 'created_by'); }
     public function penyimpanan(): BelongsTo {return $this->belongsTo(TempatPenyimpanan::class, 'penyimpanan_id'); }

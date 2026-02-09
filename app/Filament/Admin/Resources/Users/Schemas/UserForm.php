@@ -30,14 +30,23 @@ class UserForm
                         ->password()
                         // Password hanya wajib diisi saat buat user baru
                         ->required(fn (string $context): bool => $context === 'create')
+                        ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                         ->dehydrated(fn ($state) => filled($state))
                         ->revealable(),
+
+                    Select::make('opd_id')
+                    ->label('Asal OPD')
+                    ->relationship('opd', 'nama_opd')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
 
                    Select::make('role')
                         ->label('Hak Akses')
                         ->options([
                             'pegawai' => 'Pegawai',
                             'admin' => 'Administrator',
+                            'operator' => 'Operator',
                         ])
                         ->required()
                         ->default('pegawai'),

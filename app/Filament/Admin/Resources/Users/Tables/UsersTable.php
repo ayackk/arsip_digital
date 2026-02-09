@@ -22,10 +22,13 @@ class UsersTable
             TextColumn::make('email')
                 ->label('Email')
                 ->searchable(),
+            TextColumn::make('opd.nama_opd')
+                ->label('OPD'),
             TextColumn::make('role')
                 ->colors([
                     'danger' => 'admin',
                     'success' => 'pegawai',
+                    'warning' => 'operator',
                 ]),
             TextColumn::make('created_at')
                 ->label('Dibuat Pada')

@@ -20,6 +20,7 @@ return new class extends Migration
         $table->foreignId('unit_pengolah_id')->constrained('unit_pengolah');
         $table->foreignId('jenis_arsip_id')->constrained('jenis_arsip');
         $table->foreignId('penyimpanan_id')->constrained('tempat_penyimpanan');
+        $table->foreignId('opd_id')->constrained('opd');
 
         // Metadata & File
         $table->text('ringkasan')->nullable();

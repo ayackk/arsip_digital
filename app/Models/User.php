@@ -58,7 +58,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        // Lo bisa modifikasi ini jika hanya role tertentu yang boleh login
-        return true;
+        // Berikan izin akses ke panel admin hanya untuk role admin dan operator
+        return in_array($this->role, ['admin', 'operator']);
     }
 }

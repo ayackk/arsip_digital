@@ -15,12 +15,21 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use UnitEnum;
 
 class UnitPengolahResource extends Resource
 {
     protected static ?string $model = UnitPengolah::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Data Master';
+
+    protected static ?string $navigationLabel = 'Unit Pengolah';
+
+    protected static ?string $modelLabel = 'Unit Pengolah';
+
+    protected static ?string $pluralModelLabel = 'Unit Pengolah';
 
     public static function form(Schema $schema): Schema
     {

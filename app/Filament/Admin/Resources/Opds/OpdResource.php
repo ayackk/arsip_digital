@@ -15,12 +15,21 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use UnitEnum;
 
 class OpdResource extends Resource
 {
     protected static ?string $model = Opd::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Pengaturan Sistem';
+
+    protected static ?string $navigationLabel = 'OPD';
+
+    protected static ?string $modelLabel = 'OPD';
+
+    protected static ?string $pluralModelLabel = 'OPD';
 
     public static function form(Schema $schema): Schema
     {

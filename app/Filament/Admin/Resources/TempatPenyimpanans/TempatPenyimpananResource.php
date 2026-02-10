@@ -15,12 +15,21 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use UnitEnum;
 
 class TempatPenyimpananResource extends Resource
 {
     protected static ?string $model = TempatPenyimpanan::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Data Master';
+
+    protected static ?string $navigationLabel = 'Tempat Penyimpanan';
+
+    protected static ?string $modelLabel = 'Tempat Penyimpanan';
+
+    protected static ?string $pluralModelLabel = 'Tempat Penyimpanan';
 
     public static function form(Schema $schema): Schema
     {

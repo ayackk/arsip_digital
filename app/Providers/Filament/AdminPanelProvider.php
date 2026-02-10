@@ -29,8 +29,15 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
-            ])
+            'primary' => "#ffab96", // Ganti ke warna favorit lo
+            'danger' => \Filament\Support\Colors\Color::Rose,
+            'info' => \Filament\Support\Colors\Color::Blue,
+            'success' => \Filament\Support\Colors\Color::Emerald,
+            'warning' => \Filament\Support\Colors\Color::Orange,
+        ])
+            ->font('Poppins') // Pakai font yang lebih bersih
+            ->favicon(asset('images/favicon.png'))
+
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
             ->pages([

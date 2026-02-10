@@ -15,12 +15,21 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use UnitEnum;
 
 class ArsipResource extends Resource
 {
     protected static ?string $model = ArsipDokumen::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Manajemen Arsip';
+
+    protected static ?string $navigationLabel = 'Arsip Dokumen';
+
+    protected static ?string $modelLabel = 'Arsip Dokumen';
+    
+    protected static ?string $pluralModelLabel = 'Arsip Dokumen';
 
     protected static ?string $recordTitleAttribute = 'Arsip';
 

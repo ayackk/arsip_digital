@@ -14,12 +14,22 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Pengaturan Sistem';
+
+    protected static ?string $navigationLabel = 'User';
+
+    protected static ?string $modelLabel = 'User';
+
+    protected static ?string $pluralModelLabel = 'User';
 
     protected static ?string $recordTitleAttribute = 'User';
 
@@ -40,6 +50,19 @@ class UserResource extends Resource
         ];
     }
 
+     public static function getEloquentQuery(): Builder
+    {
+    $query = parent::getEloquentQuery();
+    $user = Auth::user();
+
+    // Jika yang login adalah operator, filter hanya data milik OPD-nya
+    if ($user->role === 'operator') {
+        $query->where('opd_id', $user->opd_id);
+    }
+
+    return $query;
+    }
+
     public static function getPages(): array
     {
         return [
@@ -51,7 +74,7 @@ class UserResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-    // Hanya muncul di sidebar jika user yang login adalah admin
-        return Auth::check() && Auth::user()?->role === 'admin';
+    // Hanya muncul di sidebar jika user yang login adalah admin atau operator
+        return Auth::check() && in_array(Auth::user()?->role, ['admin', 'operator']);
     }
 }

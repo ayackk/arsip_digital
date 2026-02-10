@@ -15,12 +15,21 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
 
 class JenisArsipResource extends Resource
 {
     protected static ?string $model = JenisArsip::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Data Master';
+
+    protected static ?string $navigationLabel = 'Jenis Arsip';
+
+    protected static ?string $modelLabel = 'Jenis Arsip';
+
+    protected static ?string $pluralModelLabel = 'Jenis Arsip';
 
     public static function form(Schema $schema): Schema
     {

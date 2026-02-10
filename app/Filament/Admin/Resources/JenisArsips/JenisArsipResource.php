@@ -53,7 +53,7 @@ class JenisArsipResource extends Resource
     $user = Auth::user();
 
     // Jika yang login adalah operator, filter hanya data milik OPD-nya
-    if ($user->role === 'operator') {
+    if ($user && $user->role !== 'admin') {
         $query->where('opd_id', $user->opd_id);
     }
 

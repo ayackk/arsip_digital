@@ -64,35 +64,39 @@ if (Auth::attempt($credentials, $request->remember)) {
 })->name('login.post');
 
 // 4. AREA DASHBOARD PEGAWAI (PROTECTED BY AUTH)
-Route::middleware(['auth'])->group(function () {
+    Route::middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', function (Request $request) {
+        Route::get('/dashboard', function (Request $request) {
         $search = $request->query('search');
         $kategori = $request->query('kategori');
 
-        $totalArsip = DB::table('arsip_dokumen')->count();
-        $totalUser = DB::table('user')->count();
-        $totalJenis = DB::table('jenis_arsip')->count();
-
+        // Ambil list kategori buat di dropdown filter
         $listKategori = DB::table('jenis_arsip')->get();
 
+    // Query utama untuk narik data arsip
         $query = DB::table('arsip_dokumen')
-            ->leftJoin('jenis_arsip', 'arsip_dokumen.jenis_arsip_id', '=', 'jenis_arsip.id')
-            ->select('arsip_dokumen.*', 'jenis_arsip.nama_jenis');
+            ->join('jenis_arsip', 'arsip_dokumen.jenis_arsip_id', '=', 'jenis_arsip.id')
+            ->join('opd', 'arsip_dokumen.opd_id', '=', 'opd.id') // Join ke tabel OPD
+            ->select(
+                'arsip_dokumen.*',
+                'jenis_arsip.nama_jenis as kategori',
+                'opd.nama_opd as instansi'
+            );
 
-        // Filter pencarian
+        // Jalankan filter jika ada input search
         if ($search) {
             $query->where('arsip_dokumen.judul_arsip', 'LIKE', "%{$search}%");
-        }
+            }
 
+        // Jalankan filter kategori jika dipilih
         if ($kategori) {
             $query->where('arsip_dokumen.jenis_arsip_id', $kategori);
-        }
+            }
 
-        $latestDocs = $query->latest('arsip_dokumen.created_at')->get();
+            $docs = $query->latest('arsip_dokumen.created_at')->paginate(10);
 
-        return view('dashboard', compact('totalArsip', 'totalUser', 'totalJenis', 'latestDocs', 'listKategori'));
-    })->name('dashboard');
+            return view('dashboard', compact('docs', 'listKategori'));
+        })->name('dashboard')->middleware('auth');
 
     // PROSES LOGOUT
     Route::post('/logout', function (Request $request) {

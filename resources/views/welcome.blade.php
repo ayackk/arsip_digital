@@ -47,12 +47,12 @@
             <div class="w-12 h-12 flex items-center justify-center">
                 <img src="{{ asset('img/logo.png') }}" alt="Logo" class="h-full w-full object-contain">
             </div>
-            
+
             <span class="font-extrabold tracking-tight text-xl uppercase">
                 Arsip <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-orange-400">Digital</span>
             </span>
         </div>
-        
+
         <div class="flex items-center gap-6">
             <a href="{{ url('/login') }}" class="text-sm font-bold text-primary-500 hover:text-primary-600 transition-colors">Portal Login →</a>
         </div>
@@ -63,7 +63,7 @@
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-[0.2em] mb-8">
                 Official Digital Archive System
             </div>
-            
+
             <h1 class="text-6xl md:text-8xl font-extrabold text-primary-900 tracking-tight leading-[0.9] mb-8">
                 Aman. Cepat. <br>
                 <span class="text-primary-500">Terorganisir.</span>
@@ -74,9 +74,9 @@
             </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
-                <a href="{{ url('/login') }}" 
+                <a href="{{ url('/login') }}"
                     class="w-full sm:w-auto px-12 py-5 bg-primary-900 text-white rounded-2xl font-bold text-lg shadow-2xl shadow-primary-500/20 hover:bg-primary-500 transition-all duration-300 hover:-translate-y-1 active:scale-95">
-                    Mulai Sekarang
+                    Login
                 </a>
             </div>
         </div>

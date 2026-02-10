@@ -26,7 +26,9 @@ public static function configure (Schema $schema): Schema
 
                 Select::make('unit_pengolah_id')
                     ->relationship('unitPengolah', 'nama_unit',
-                    modifyQueryUsing: fn (Builder $query) => $query->where('opd_id', Auth::user()->opd_id)
+                   modifyQueryUsing: fn (Builder $query) => Auth::user()->role === 'admin'
+                    ? $query
+                    : $query->where('opd_id', Auth::user()->opd_id)
                     )
                     ->required()
                     ->preload()
@@ -44,7 +46,9 @@ public static function configure (Schema $schema): Schema
 
                 Select::make('jenis_arsip_id')
                     ->relationship('jenisArsip', 'nama_jenis',
-                    modifyQueryUsing: fn (Builder $query) => $query->where('opd_id', Auth::user()->opd_id)
+                    modifyQueryUsing: fn (Builder $query) => Auth::user()->role === 'admin'
+                    ? $query
+                    : $query->where('opd_id', Auth::user()->opd_id)
                     )
                     ->required()
                     ->preload(),
@@ -54,7 +58,9 @@ public static function configure (Schema $schema): Schema
                     ->relationship(
                         name: 'penyimpanan',
                         titleAttribute: 'nama_ruangan',
-                        modifyQueryUsing: fn (Builder $query) => $query->where('opd_id', Auth::user()->opd_id)
+                        modifyQueryUsing: fn (Builder $query) => Auth::user()->role === 'admin'
+                        ? $query
+                        : $query->where('opd_id', Auth::user()->opd_id)
                 )
                     ->getOptionLabelFromRecordUsing(fn ($record) =>
                         "{$record->nama_ruangan} | Lemari {$record->posisi_lemari} | Rak {$record->posisi_rak} | Baris {$record->baris}"

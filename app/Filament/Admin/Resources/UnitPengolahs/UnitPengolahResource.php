@@ -48,7 +48,7 @@ class UnitPengolahResource extends Resource
         ];
     }
 
-        public static function getEloquentQuery(): Builder
+    public static function getEloquentQuery(): Builder
     {
     $query = parent::getEloquentQuery();
     $user = Auth::user();
@@ -61,6 +61,11 @@ class UnitPengolahResource extends Resource
     return $query;
     }
 
+    public static function canViewAny(): bool
+    {
+    // Hanya user dengan role 'admin' atau 'operator' yang bisa melihat menu ini
+    return in_array(Auth::user()->role, ['admin', 'operator']);
+    }
 
     public static function getPages(): array
     {

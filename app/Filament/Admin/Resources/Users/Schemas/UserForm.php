@@ -7,47 +7,53 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema->schema([
-                   TextInput::make('name')
-                        ->label('Nama Lengkap')
-                        ->required()
-                        ->maxLength(255),
+        return $schema
+            ->schema([
+                TextInput::make('name')->label('Nama Lengkap')->required()->maxLength(255),
 
-                   TextInput::make('email')
-                        ->label('Alamat Email')
-                        ->email()
-                        ->required()
-                        ->unique(ignoreRecord: true)
-                        ->maxLength(255),
+                TextInput::make('email')->label('Alamat Email')->email()->required()->unique(ignoreRecord: true)->maxLength(255),
 
-                   TextInput::make('password')
-                        ->label('Password')
-                        ->password()
-                        // Password hanya wajib diisi saat buat user baru
-                        ->required(fn (string $context): bool => $context === 'create')
-                        ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                        ->dehydrated(fn ($state) => filled($state))
-                        ->revealable(),
+                TextInput::make('password')
+                    ->label('Password')
+                    ->password()
+                    // Password hanya wajib diisi saat buat user baru
+                    ->required(fn(string $context): bool => $context === 'create')
+                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                    ->dehydrated(fn($state) => filled($state))
+                    ->revealable(),
 
-                    Select::make('opd_id')
-                        ->label('Asal OPD')
-                        ->relationship('opd', 'nama_opd')
-                        ->default(Auth::user() ? Auth::user()->opd_id : null) // Otomatis terisi OPD si user
-                        ->disabled(fn () => Auth::user() && Auth::user()->role === 'operator') // Operator gak bisa ganti-ganti
-                        ->dehydrated() // Tetap simpan nilai ke database meskipun di-disable
-                        ->searchable()
-                        ->preload()
-                        ->required(),
+                Select::make('opd_id')
+                    ->label('Asal OPD')
+                    ->relationship('opd', 'nama_opd')
+                    ->live()
+                    ->default(Auth::user() ? Auth::user()->opd_id : null) // Otomatis terisi OPD si user
+                    ->disabled(fn() => Auth::user() && in_array(Auth::user()->role, ['operator', 'pegawai'])) // Operator gak bisa ganti-ganti
+                    ->dehydrated() // Tetap simpan nilai ke database meskipun di-disable
+                    ->searchable()
+                    ->preload()
+                    ->required(),
 
-                   Select::make('role')
-                        ->label('Hak Akses')
-                        ->options(function () {
+                Select::make('unit_pengolah_id')
+                    ->label('Unit Kerja / Bidang')
+                    ->relationship(
+                        name: 'unitPengolah',
+                        titleAttribute: 'nama_unit',
+                        // Filter: Cuma tampilin unit yang ada di OPD yang dipilih di atas
+                        modifyQueryUsing: fn(Builder $query, Get $get) => $query->where('opd_id', $get('opd_id')),
+                    )
+                    ->required()
+                    ->preload(),
+
+                Select::make('role')
+                    ->label('Hak Akses')
+                    ->options(function () {
                         $user = Auth::user();
 
                         // Kalau yang login Admin, dia bisa buat semua role
@@ -66,6 +72,7 @@ class UserForm
                     })
                     ->required()
                     ->native(false),
-                ])->columns(2);
+            ])
+            ->columns(2);
     }
 }

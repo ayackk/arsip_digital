@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Admin\Resources\TempatPenyimpanans;
+namespace App\Filament\Admin\Resources\TingkatAkses;
 
-use App\Filament\Admin\Resources\TempatPenyimpanans\Pages\CreateTempatPenyimpanan;
-use App\Filament\Admin\Resources\TempatPenyimpanans\Pages\EditTempatPenyimpanan;
-use App\Filament\Admin\Resources\TempatPenyimpanans\Pages\ListTempatPenyimpanans;
-use App\Filament\Admin\Resources\TempatPenyimpanans\Schemas\TempatPenyimpananForm;
-use App\Filament\Admin\Resources\TempatPenyimpanans\Tables\TempatPenyimpanansTable;
-use App\Models\TempatPenyimpanan;
+use App\Filament\Admin\Resources\TingkatAkses\Pages\CreateTingkatAkses;
+use App\Filament\Admin\Resources\TingkatAkses\Pages\EditTingkatAkses;
+use App\Filament\Admin\Resources\TingkatAkses\Pages\ListTingkatAkses;
+use App\Filament\Admin\Resources\TingkatAkses\Schemas\TingkatAksesForm;
+use App\Filament\Admin\Resources\TingkatAkses\Tables\TingkatAksesTable;
+use App\Models\TingkatAkses;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -17,28 +17,28 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
-class TempatPenyimpananResource extends Resource
+class TingkatAksesResource extends Resource
 {
-    protected static ?string $model = TempatPenyimpanan::class;
+    protected static ?string $model = TingkatAkses::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static string|UnitEnum|null $navigationGroup = 'Data Master';
 
-    protected static ?string $navigationLabel = 'Tempat Penyimpanan';
+    protected static ?string $navigationLabel = 'Tingkat Akses';
 
-    protected static ?string $modelLabel = 'Tempat Penyimpanan';
+    protected static ?string $modelLabel = 'Tingkat Akses';
 
-    protected static ?string $pluralModelLabel = 'Tempat Penyimpanan';
+    protected static ?string $pluralModelLabel = 'Tingkat Akses';
 
     public static function form(Schema $schema): Schema
     {
-        return TempatPenyimpananForm::configure($schema);
+        return TingkatAksesForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return TempatPenyimpanansTable::configure($table);
+        return TingkatAksesTable::configure($table);
     }
 
     public static function getRelations(): array
@@ -70,9 +70,9 @@ class TempatPenyimpananResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListTempatPenyimpanans::route('/'),
-            'create' => CreateTempatPenyimpanan::route('/create'),
-            'edit' => EditTempatPenyimpanan::route('/{record}/edit'),
+            'index' => ListTingkatAkses::route('/'),
+            'create' => CreateTingkatAkses::route('/create'),
+            'edit' => EditTingkatAkses::route('/{record}/edit'),
         ];
     }
 }

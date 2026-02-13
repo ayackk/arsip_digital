@@ -27,43 +27,25 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            // ->login()
+            ->login()
+            ->sidebarWidth('16rem')
+            ->brandName('NADA')
             ->colors([
-            'primary' => "#ffab96", // Ganti ke warna favorit lo
-            'danger' => \Filament\Support\Colors\Color::Rose,
-            'info' => \Filament\Support\Colors\Color::Blue,
-            'success' => \Filament\Support\Colors\Color::Emerald,
-            'warning' => \Filament\Support\Colors\Color::Orange,
-        ])
+                'primary' => '#ffab96', // Ganti ke warna favorit lo
+                'danger' => \Filament\Support\Colors\Color::Rose,
+                'info' => \Filament\Support\Colors\Color::Blue,
+                'success' => \Filament\Support\Colors\Color::Emerald,
+                'warning' => \Filament\Support\Colors\Color::Orange,
+            ])
             ->font('Poppins') // Pakai font yang lebih bersih
             ->favicon(asset('images/favicon.png'))
 
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
-            ->pages([
-                Dashboard::class,
-            ])
+            ->pages([Dashboard::class])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
-            ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
-                \App\Filament\Admin\Widgets\ArsipStats::class,
-                \App\Filament\Admin\Widgets\ArsipChart::class,
-                \App\Filament\Admin\Widgets\ArsipTerbaru::class,
-            ])
-            ->middleware([
-                EncryptCookies::class,
-                AddQueuedCookiesToResponse::class,
-                StartSession::class,
-                AuthenticateSession::class,
-                ShareErrorsFromSession::class,
-                VerifyCsrfToken::class,
-                SubstituteBindings::class,
-                DisableBladeIconComponents::class,
-                DispatchServingFilamentEvent::class,
-            ])
-            ->authMiddleware([
-                Authenticate::class,
-            ]);
+            ->widgets([AccountWidget::class, FilamentInfoWidget::class, \App\Filament\Admin\Widgets\ArsipStats::class, \App\Filament\Admin\Widgets\ArsipChart::class, \App\Filament\Admin\Widgets\ArsipTerbaru::class])
+            ->middleware([EncryptCookies::class, AddQueuedCookiesToResponse::class, StartSession::class, AuthenticateSession::class, ShareErrorsFromSession::class, VerifyCsrfToken::class, SubstituteBindings::class, DisableBladeIconComponents::class, DispatchServingFilamentEvent::class])
+            ->authMiddleware([Authenticate::class]);
     }
 }

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Illuminate\Support\Facades\Storage;
+use Filament\Notifications\Notification;
 
 class ArsipsTable
 {
@@ -20,66 +21,79 @@ class ArsipsTable
     {
         return $table
             ->columns([
-            TextColumn::make('judul_arsip')
-                ->searchable()
-                ->sortable(),
-            TextColumn::make('tanggal_naskah')
-                ->date()
-                ->sortable(),
-            TextColumn::make('opd.nama_opd')
-                ->label('OPD'),
-            TextColumn::make('unitPengolah.nama_unit')
-                ->label('Unit'),
-            TextColumn::make('jenisArsip.nama_jenis')
-                ->label('Kategori'),
-           TextColumn::make('penyimpanan.nama_ruangan')
-                ->label('Tempat Penyimpanan')
-                ->formatStateUsing(function ($record) {
-                    if (!$record->penyimpanan) return '-';
+                TextColumn::make('judul_arsip')->searchable()->sortable(),
+                TextColumn::make('tanggal_naskah')->date()->sortable(),
+                TextColumn::make('opd.nama_opd')->label('OPD'),
+                TextColumn::make('unitPengolah.nama_unit')->label('Unit'),
+                TextColumn::make('jenisArsip.nama_jenis')->label('Kategori'),
+                TextColumn::make('tingkatAkses.nama_tingkat')->label('Tingkat Akses'),
+                TextColumn::make('penyimpanan.nama_ruangan')
+                    ->label('Tempat Penyimpanan')
+                    ->formatStateUsing(function ($record) {
+                        if (!$record->penyimpanan) {
+                            return '-';
+                        }
 
-                    return "{$record->penyimpanan->nama_ruangan} | Lemari {$record->penyimpanan->posisi_lemari} | Rak {$record->penyimpanan->posisi_rak} | Baris {$record->penyimpanan->baris}";
-                })
-            ->searchable(),
-            TextColumn::make('lokasi_file')
-                ->label('File'),
+                        return "{$record->penyimpanan->nama_ruangan} | Lemari {$record->penyimpanan->posisi_lemari} | Rak {$record->penyimpanan->posisi_rak} | Baris {$record->penyimpanan->baris}";
+                    })
+                    ->searchable(),
+                TextColumn::make('lokasi_file')
+                    ->label('File')
+                    ->icon('heroicon-m-document-text')
+                    ->color('primary')
+                    ->formatStateUsing(fn($state) => collect($state)->map(fn($path) => basename($path))->implode(', ')),
+                TextColumn::make('lokasi_foto')
+                    ->label('Media')
+                    ->icon('heroicon-m-photo')
+                    ->color('warning')
+                    ->formatStateUsing(fn($state) => collect($state)->map(fn($path) => basename($path))->implode(', ')),
+                // basename() itu buat nampilin nama file doang, gak usah path lengkap
             ])
-            ->filters([
-                SelectFilter::make('unit_pengolah_id')
-                    ->relationship('unitPengolah', 'nama_unit')
-                    ->label('Filter Unit'),
-                SelectFilter::make('opd_id')
-                    ->relationship('opd', 'nama_opd')
-                    ->label('Filter OPD'),
-        ])
-        ->actions([
-        ViewAction::make(),
-        EditAction::make(),
+            ->filters([SelectFilter::make('unit_pengolah_id')->relationship('unitPengolah', 'nama_unit')->label('Filter Unit'), SelectFilter::make('opd_id')->relationship('opd', 'nama_opd')->label('Filter OPD')])
+            ->actions([
+                ViewAction::make(),
+                EditAction::make(),
 
-        // TOMBOL DOWNLOAD
-        Action::make('download')
-            ->label('Download')
-            ->icon('heroicon-o-arrow-down-tray')
-            ->color('info')
-            ->action(function ($record) {
-        // Kita ambil path file langsung dari storage app public
-        $filePath = storage_path('app/public/' . $record->lokasi_file);
+                Action::make('download_media')
+                    ->label('Download Media')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('success')
+                    ->action(function ($record) {
+                        // Karena arsip_foto itu array (multiple upload)
+                        $files = $record->lokasi_foto;
 
-        // Cek apakah filenya beneran ada di folder tersebut
-        if (file_exists($filePath)) {
-            // Kita buat nama file downloadnya rapi berdasarkan judul arsip
-            $namaFile = str($record->judul_arsip)->slug() . '.' . pathinfo($filePath, PATHINFO_EXTENSION);
+                        if (empty($files)) {
+                            return Notification::make()->title('Gak ada media bro')->danger()->send();
+                        }
 
-            // Return response download (Ini yang bikin gak akan kena 403)
-            return response()->download($filePath, $namaFile);
-        }
-            })
-            ->openUrlInNewTab()
-            ->visible(fn ($record) => !empty($record->lokasi_file)),
-        ])
-            ->toolbarActions([
-                    BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+                        // Kalau cuma 1 file, langsung download
+                        if (count($files) === 1) {
+                            return response()->download(storage_path('app/public/' . $files[0]));
+                        }
+
+                    }),
+
+                // TOMBOL DOWNLOAD
+                Action::make('download')
+                    ->label('Download')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('info')
+                    ->action(function ($record) {
+                        // Kita ambil path file langsung dari storage app public
+                        $filePath = storage_path('app/public/' . $record->lokasi_file);
+
+                        // Cek apakah filenya beneran ada di folder tersebut
+                        if (file_exists($filePath)) {
+                            // Kita buat nama file downloadnya rapi berdasarkan judul arsip
+                            $namaFile = str($record->judul_arsip)->slug() . '.' . pathinfo($filePath, PATHINFO_EXTENSION);
+
+                            // Return response download (Ini yang bikin gak akan kena 403)
+                            return response()->download($filePath, $namaFile);
+                        }
+                    })
+                    ->openUrlInNewTab()
+                    ->visible(fn($record) => !empty($record->lokasi_file)),
+            ])
+            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 }

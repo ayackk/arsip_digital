@@ -23,7 +23,7 @@ class OpdResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Pengaturan Sistem';
+    protected static string|UnitEnum|null $navigationGroup = 'Data Master';
 
     protected static ?string $navigationLabel = 'OPD';
 
@@ -44,8 +44,8 @@ class OpdResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     public static function canViewAny(): bool
@@ -57,15 +57,15 @@ class OpdResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-    $query = parent::getEloquentQuery();
-    $user = Auth::user();
+        $query = parent::getEloquentQuery();
+        $user = Auth::user();
 
-    // Jika yang login adalah operator, filter data berdasarkan opd_id si user
-    if ($user->role === 'operator') {
-        $query->where('opd_id', $user->opd_id);
-    }
+        // Jika yang login adalah operator, filter data berdasarkan opd_id si user
+        if ($user->role === 'operator') {
+            $query->where('opd_id', $user->opd_id);
+        }
 
-    return $query;
+        return $query;
     }
 
     public static function getPages(): array

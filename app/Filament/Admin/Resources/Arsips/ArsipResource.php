@@ -28,7 +28,7 @@ class ArsipResource extends Resource
     protected static ?string $navigationLabel = 'Arsip Dokumen';
 
     protected static ?string $modelLabel = 'Arsip Dokumen';
-    
+
     protected static ?string $pluralModelLabel = 'Arsip Dokumen';
 
     protected static ?string $recordTitleAttribute = 'Arsip';
@@ -46,21 +46,38 @@ class ArsipResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     public static function getEloquentQuery(): Builder
     {
-    $query = parent::getEloquentQuery();
-    $user = Auth::user();
+        $query = parent::getEloquentQuery();
+        $user = Auth::user();
 
-    // Jika yang login adalah operator, filter hanya data milik OPD-nya
-    if ($user->role === 'operator') {
-        $query->where('opd_id', $user->opd_id);
-    }
+        if (request()->routeIs('filament.admin.resources.arsips.create', 'filament.admin.resources.arsips.edit')) {
+            return $query;
+        }
 
-    return $query;
+        // Jika yang login adalah operator, filter hanya data milik OPD-nya
+        if ($user->role === 'operator') {
+            $query->where('opd_id', $user->opd_id);
+        }
+
+        return $query->where(function ($q) use ($user) {
+            $q->whereHas('tingkatAkses', function ($t) {
+                // Kondisi 1: PUBLIC - Semua orang bisa lihat
+                $t->where('nama_tingkat', 'Public');
+            })
+                ->orWhere(function ($qInternal) use ($user) {
+                    // Kondisi 2: INTERNAL - Hanya unit pengolah yang sama
+                    $qInternal->whereHas('tingkatAkses', fn($t) => $t->where('nama_tingkat', 'Internal'))->where('unit_pengolah_id', $user->unit_pengolah_id);
+                })
+                ->orWhere(function ($qPrivate) use ($user) {
+                    // Kondisi 3: PRIVATE - Hanya pengunggah asli
+                    $qPrivate->whereHas('tingkatAkses', fn($t) => $t->where('nama_tingkat', 'Private'))->where('created_by', $user->id);
+                });
+        });
     }
 
     public static function getPages(): array

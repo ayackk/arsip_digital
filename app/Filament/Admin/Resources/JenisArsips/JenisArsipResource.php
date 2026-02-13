@@ -44,22 +44,27 @@ class JenisArsipResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
     public static function getEloquentQuery(): Builder
     {
-    $query = parent::getEloquentQuery();
-    $user = Auth::user();
+        $query = parent::getEloquentQuery();
+        $user = Auth::user();
 
-    // Jika yang login adalah operator, filter hanya data milik OPD-nya
-    if ($user && $user->role !== 'admin') {
-        $query->where('opd_id', $user->opd_id);
+        // Jika yang login adalah operator, filter hanya data milik OPD-nya
+        if ($user && $user->role !== 'admin') {
+            $query->where('opd_id', $user->opd_id);
+        }
+
+        return $query;
     }
 
-    return $query;
+    public static function canViewAny(): bool
+    {
+        // Hanya user dengan role 'admin' atau 'operator' yang bisa melihat menu ini
+        return in_array(Auth::user()->role, ['admin', 'operator']);
     }
-
 
     public static function getPages(): array
     {

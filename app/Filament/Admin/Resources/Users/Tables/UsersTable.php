@@ -16,35 +16,20 @@ class UsersTable
     {
         return $table
             ->columns([
-            TextColumn::make('name')
-                ->label('Nama')
-                ->searchable(),
-            TextColumn::make('email')
-                ->label('Email')
-                ->searchable(),
-            TextColumn::make('opd.nama_opd')
-                ->label('OPD'),
-            TextColumn::make('role')
-                ->colors([
+                TextColumn::make('name')->label('Nama')->searchable(),
+                TextColumn::make('email')->label('Email')->searchable(),
+                TextColumn::make('opd.nama_opd')->label('OPD'),
+                TextColumn::make('role')->colors([
                     'danger' => 'admin',
                     'success' => 'pegawai',
                     'warning' => 'operator',
                 ]),
-            TextColumn::make('created_at')
-                ->label('Dibuat Pada')
-                ->dateTime()
-                ->sortable(),
+                TextColumn::make('created_at')->label('Dibuat Pada')->dateTime()->sortable(),
             ])
             ->filters([
                 //
             ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->recordActions([EditAction::make()])
+            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 }

@@ -17,6 +17,7 @@ return new class extends Migration
         $table->string('email')->unique();
         $table->string('password');
         $table->foreignId('opd_id')->nullable()->constrained('opd');
+        $table->foreignId('unit_pengolah_id')->nullable()->constrained('unit_pengolah');
         $table->enum('role', ['admin','operator','pegawai']);
         $table->rememberToken();
         $table->timestamps();

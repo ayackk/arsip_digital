@@ -27,15 +27,13 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'role', // 'admin','operator','pegawai'
         'opd_id',
+        'unit_pengolah_id',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ['password', 'remember_token'];
 
     /**
      * Relasi ke model Arsip
@@ -50,7 +48,15 @@ class User extends Authenticatable implements FilamentUser
      * Relasi ke model OPD
      * Satu user bisa memiliki satu OPD
      */
-    public function opd(): BelongsTo { return $this->belongsTo(Opd::class, 'opd_id'); }
+    public function opd(): BelongsTo
+    {
+        return $this->belongsTo(Opd::class, 'opd_id');
+    }
+
+    public function unitPengolah(): BelongsTo
+    {
+        return $this->belongsTo(UnitPengolah::class, 'unit_pengolah_id');
+    }
 
     /**
      * Syarat user bisa login ke Filament
@@ -58,7 +64,6 @@ class User extends Authenticatable implements FilamentUser
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        // Berikan izin akses ke panel admin hanya untuk role admin dan operator
-        return in_array($this->role, ['admin', 'operator']);
+        return in_array($this->role, ['admin', 'operator', 'pegawai']);
     }
 }

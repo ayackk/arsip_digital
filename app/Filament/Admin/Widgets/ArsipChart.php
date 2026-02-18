@@ -5,12 +5,19 @@ namespace App\Filament\Admin\Widgets;
 use App\Models\ArsipDokumen;
 use Filament\Widgets\ChartWidget;
 use App\Filament\Admin\Resources\Arsips\ArsipResource;
+use Illuminate\Support\Facades\Auth;
 
 class ArsipChart extends ChartWidget
 {
     protected ?string $heading = 'Arsip per Bulan';
 
     protected static ?int $sort = 2;
+
+    public static function canView(): bool
+    {
+    // Widget ini hanya bisa dilihat oleh Admin dan Operator
+    return in_array(auth::user()->role, ['admin', 'operator']);
+    }
 
     protected int|string|array $columnSpan = 1; // Jangan biarkan 'full' kalau mau sebelahan
 

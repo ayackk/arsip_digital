@@ -13,7 +13,7 @@ class ArsipDokumen extends Model
     protected $primaryKey = 'id_arsip';
     public $incrementing = true;
 
-    protected $fillable = ['judul_arsip', 'nomor_naskah_dinas', 'tanggal_naskah', 'opd_id', 'unit_pengolah_id', 'jenis_arsip_id', 'penyimpanan_id', 'ringkasan', 'format_file', 'lokasi_file', 'lokasi_foto', 'ukuran_file', 'tingkat_akses_id', 'tahun_arsip', 'created_by'];
+    protected $fillable = ['judul_arsip', 'nomor_naskah_dinas', 'tanggal_naskah', 'opd_id', 'unit_pengolah_id', 'jenis_arsip_id', 'penyimpanan_id', 'ringkasan', 'format_file', 'lokasi_file', 'lokasi_foto', 'ukuran_file', 'tingkat', 'tahun_arsip', 'created_by'];
 
     // Relasi ke Master Data
     public function unitPengolah(): BelongsTo
@@ -35,10 +35,6 @@ class ArsipDokumen extends Model
     public function penyimpanan(): BelongsTo
     {
         return $this->belongsTo(TempatPenyimpanan::class, 'penyimpanan_id');
-    }
-    public function tingkatAkses(): BelongsTo
-    {
-        return $this->belongsTo(TingkatAkses::class, 'tingkat_akses_id');
     }
 
     protected static function booted()

@@ -1,0 +1,26 @@
+/* 1. Sembunyikan judul "Sign in" di halaman login */
+.fi-simple-page h1,
+.fi-login-page h1 {
+    display: none !important;
+}
+
+/* 2. Styling Sidebar (Umum) */
+.fi-sidebar {
+    box-shadow: none !important; /* Buang shadow biar flat */
+}
+
+/* 3. Khusus Light Mode: Kasih garis abu-abu */
+html:not(.dark) .fi-sidebar {
+    border-inline-end: 1px solid #e5e7eb !important; /* Abu-abu tipis (Gray 200) */
+}
+
+/* 4. Khusus Dark Mode: Biar tetep clean (Opsional) */
+html.dark .fi-sidebar {
+    border-inline-end: 1px solid #2d2d2d !important; /* Garis gelap supaya gak kontras */
+}
+
+/* 5. Reset border & margin di Main Content */
+.fi-main {
+    border: none !important;
+    border-inline-start: 1px solid transparent;
+}

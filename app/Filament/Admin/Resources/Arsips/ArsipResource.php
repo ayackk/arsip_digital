@@ -50,35 +50,36 @@ class ArsipResource extends Resource
             ];
     }
 
-    public static function getEloquentQuery(): Builder
-    {
-        $query = parent::getEloquentQuery();
-        $user = Auth::user();
+public static function getEloquentQuery(): Builder
+{
+    $query = parent::getEloquentQuery();
+    $user = Auth::user();
 
-        if (request()->routeIs('filament.admin.resources.arsips.create', 'filament.admin.resources.arsips.edit')) {
-            return $query;
-        }
+    // Filter Role Operator
+    if ($user->role === 'operator') {
+        $query->where('opd_id', $user->opd_id);
+    }
 
-        // Jika yang login adalah operator, filter hanya data milik OPD-nya
-        if ($user->role === 'operator') {
-            $query->where('opd_id', $user->opd_id);
-        }
-
-        return $query->where(function ($q) use ($user) {
-            $q->whereHas('tingkatAkses', function ($t) {
-                // Kondisi 1: PUBLIC - Semua orang bisa lihat
-                $t->where('nama_tingkat', 'Public');
-            })
-                ->orWhere(function ($qInternal) use ($user) {
-                    // Kondisi 2: INTERNAL - Hanya unit pengolah yang sama
-                    $qInternal->whereHas('tingkatAkses', fn($t) => $t->where('nama_tingkat', 'Internal'))->where('unit_pengolah_id', $user->unit_pengolah_id);
-                })
-                ->orWhere(function ($qPrivate) use ($user) {
-                    // Kondisi 3: PRIVATE - Hanya pengunggah asli
-                    $qPrivate->whereHas('tingkatAkses', fn($t) => $t->where('nama_tingkat', 'Private'))->where('created_by', $user->id);
-                });
+    // Filter Hak Akses (Jangan jalan di halaman Create/Edit biar gak bug)
+    if (!request()->routeIs('filament.admin.resources.arsips.create', 'filament.admin.resources.arsips.edit')) {
+        $query->where(function ($q) use ($user) {
+            $q->where('tingkat', 'Public')
+              ->orWhere(function ($sub) use ($user) {
+                  $sub->where('tingkat', 'Internal')
+                      ->where(function($unit) use ($user) {
+                          $unit->where('unit_pengolah_id', $user->unit_pengolah_id)
+                               ->orWhereNull('unit_pengolah_id');
+                      });
+              })
+              ->orWhere(function ($sub) use ($user) {
+                  $sub->where('tingkat', 'Private')
+                      ->where('created_by', $user->id);
+              });
         });
     }
+
+    return $query;
+}
 
     public static function getPages(): array
     {

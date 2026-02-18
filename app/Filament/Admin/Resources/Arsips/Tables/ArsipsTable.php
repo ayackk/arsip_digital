@@ -26,7 +26,6 @@ class ArsipsTable
                 TextColumn::make('opd.nama_opd')->label('OPD'),
                 TextColumn::make('unitPengolah.nama_unit')->label('Unit'),
                 TextColumn::make('jenisArsip.nama_jenis')->label('Kategori'),
-                TextColumn::make('tingkatAkses.nama_tingkat')->label('Tingkat Akses'),
                 TextColumn::make('penyimpanan.nama_ruangan')
                     ->label('Tempat Penyimpanan')
                     ->formatStateUsing(function ($record) {
@@ -52,9 +51,14 @@ class ArsipsTable
             ->filters([SelectFilter::make('unit_pengolah_id')->relationship('unitPengolah', 'nama_unit')->label('Filter Unit'), SelectFilter::make('opd_id')->relationship('opd', 'nama_opd')->label('Filter OPD')])
             ->actions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    // Tombol Edit cuma muncul buat admin & operator
+                    ->visible(fn ($record) => in_array(auth::user()->role, ['admin', 'operator'])),
 
-                Action::make('download_media')
+                DeleteAction::make()
+                // Tombol Delete cuma muncul buat admin & operator
+                ->visible(fn () => in_array(auth::user()->role, ['admin', 'operator'])),
+                  Action::make('download_media')
                     ->label('Download Media')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('success')
@@ -63,7 +67,7 @@ class ArsipsTable
                         $files = $record->lokasi_foto;
 
                         if (empty($files)) {
-                            return Notification::make()->title('Gak ada media bro')->danger()->send();
+                            return Notification::make()->title('Media tidak tersedia')->danger()->send();
                         }
 
                         // Kalau cuma 1 file, langsung download
@@ -93,7 +97,16 @@ class ArsipsTable
                     })
                     ->openUrlInNewTab()
                     ->visible(fn($record) => !empty($record->lokasi_file)),
+
             ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                DeleteBulkAction::make()
+                    // Hapus masal juga cuma buat admin & operator
+                    ->visible(fn () => in_array(auth::user()->role, ['admin', 'operator'])),
+            ]),
+
+                     ])
             ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
     }
 }

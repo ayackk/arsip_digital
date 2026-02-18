@@ -21,7 +21,6 @@ return new class extends Migration
         $table->foreignId('jenis_arsip_id')->constrained('jenis_arsip');
         $table->foreignId('penyimpanan_id')->constrained('tempat_penyimpanan');
         $table->foreignId('opd_id')->constrained('opd');
-        $table->foreignId('tingkat_akses_id')->constrained('tingkat_akses');
 
         // Metadata & File
         $table->text('ringkasan')->nullable();
@@ -29,6 +28,7 @@ return new class extends Migration
         $table->integer('ukuran_file')->nullable();
         $table->string('lokasi_file'); // Kolom tambahan untuk simpan path filenya
         $table->string('lokasi_foto')->nullable(); // Kolom tambahan untuk simpan path foto arsip
+        $table->enum('tingkat', ['Public', 'Internal', 'Private']); // Kolom untuk tingkat akses
 
         // Tracker
         $table->foreignId('created_by')->constrained('user');

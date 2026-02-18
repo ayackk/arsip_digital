@@ -28,31 +28,9 @@ class ArsipTerbaru extends TableWidget
 
                 TextColumn::make('tanggal_naskah')->label('Tanggal naskah')->date()->sortable(),
 
-                TextColumn::make('opd.nama_opd')->label('OPD')->sortable(),
-
                 TextColumn::make('unitPengolah.nama_unit')->label('Unit')->sortable(),
 
                 TextColumn::make('jenisArsip.nama_jenis')->label('Kategori')->sortable(),
-
-                TextColumn::make('tingkatAkses.nama_tingkat')->label('Tingkat Akses')->badge()->color(
-                    fn(string $state): string => match ($state) {
-                        'Public' => 'success',
-                        'Internal' => 'warning',
-                        'Private' => 'danger',
-                        default => 'gray',
-                    },
-                ),
-
-                TextColumn::make('penyimpanan.nama_ruangan')
-                    ->label('Tempat Penyimpanan')
-                    ->formatStateUsing(function ($record) {
-                        if (!$record->penyimpanan) {
-                            return '-';
-                        }
-
-                        return "{$record->penyimpanan->nama_ruangan} | Lemari {$record->penyimpanan->posisi_lemari} | Rak {$record->penyimpanan->posisi_rak} | Baris {$record->penyimpanan->baris}";
-                    })
-                    ->searchable(),
 
                 TextColumn::make('lokasi_file')
                     ->label('File')
@@ -79,7 +57,7 @@ class ArsipTerbaru extends TableWidget
                         $files = $record->lokasi_foto;
 
                         if (empty($files)) {
-                            return Notification::make()->title('Gak ada media bro')->danger()->send();
+                            return Notification::make()->title('Media tidak tersedia')->danger()->send();
                         }
 
                         // Kalau cuma 1 file, langsung download

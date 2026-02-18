@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tingkat_akses', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_tingkat'); // Contoh: Public, Internal, Rahasia
+            $table->enum('tingkat', ['Public', 'Internal', 'Private']);
             $table->foreignId('opd_id')->nullable()->constrained('opd');
             $table->timestamps();
         });

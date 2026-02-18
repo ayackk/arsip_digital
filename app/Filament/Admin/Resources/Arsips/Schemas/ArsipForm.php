@@ -40,24 +40,21 @@ class ArsipForm
                 ->preload()
                 ->required(),
 
-            Select::make('jenis_arsip_id')->relationship('jenisArsip', 'nama_jenis', modifyQueryUsing: fn(Builder $query) => Auth::user()->role === 'admin' ? $query : $query->where('opd_id', Auth::user()->opd_id))->required()->preload(),
+            Select::make('jenis_arsip_id')
+                ->relationship('jenisArsip', 'nama_jenis', modifyQueryUsing: fn(Builder $query) => Auth::user()->role === 'admin' ? $query : $query->where('opd_id', Auth::user()->opd_id))->required()->preload(),
 
-            Select::make('tingkat_akses_id')->relationship('tingkatAkses', 'nama_tingkat', modifyQueryUsing: fn(Builder $query) => Auth::user()->role === 'admin' ? $query : $query->where('opd_id', Auth::user()->opd_id))->required()->preload(),
-
+            Select::make('tingkat')
+                ->label('Tingkat Akses')
+                ->options([
+                    'Public' => 'Public',
+                    'Internal' => 'Internal',
+                    'Private' => 'Private',
+                ])
+                ->required()
+                ->preload(),
             Select::make('penyimpanan_id')->label('Tempat Penyimpanan')->relationship(name: 'penyimpanan', titleAttribute: 'nama_ruangan', modifyQueryUsing: fn(Builder $query) => Auth::user()->role === 'admin' ? $query : $query->where('opd_id', Auth::user()->opd_id))->getOptionLabelFromRecordUsing(fn($record) => "{$record->nama_ruangan} | Lemari {$record->posisi_lemari} | Rak {$record->posisi_rak} | Baris {$record->baris}")->searchable()->preload()->required(),
 
             Textarea::make('ringkasan')->rows(3)->columnSpanFull(),
-
-            FileUpload::make('lokasi_foto')
-                ->multiple()
-                ->acceptedFileTypes(['image/*', 'video/mp4', 'video/quicktime'])
-                ->disk('public')
-                ->label('Media Pendukung (Foto/Video)')
-                ->directory('arsip_foto')
-                ->reorderable()
-                ->preserveFilenames()
-                ->imageEditor()
-                ->columnSpanFull(),
 
             FileUpload::make('lokasi_file')
                 ->label('Dokumen Digital (PDF)')
@@ -84,6 +81,18 @@ class ArsipForm
                 ->reactive(),
 
             TextInput::make('format_file')->label('Format File')->default('')->readOnly(),
+
+            FileUpload::make('lokasi_foto')
+                ->multiple()
+                ->acceptedFileTypes(['image/*', 'video/mp4', 'video/quicktime'])
+                ->disk('public')
+                ->label('Media Pendukung (Foto/Video)')
+                ->directory('arsip_foto')
+                ->reorderable()
+                ->preserveFilenames()
+                ->imageEditor()
+                ->columnSpanFull(),
+
 
             // Hidden fields untuk metadata
             Hidden::make('format_file'),

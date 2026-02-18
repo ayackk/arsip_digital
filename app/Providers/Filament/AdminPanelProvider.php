@@ -10,8 +10,6 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -28,24 +26,68 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->sidebarWidth('16rem')
-            ->brandName('NADA')
+
+            ->brandName(new \Illuminate\Support\HtmlString('
+                <div style="display:inline-flex; align-items:center; gap:10px; white-space:nowrap;">
+                    <img src="'.asset('img/logo.png').'" alt="Logo" style="height:2.4rem; width:auto; flex-shrink:0; max-width:none;">
+                    
+                    <span style="
+                        font-weight:800;
+                        font-size:1.6rem;
+                        letter-spacing:1.5px;
+                        color:#ffab200;
+                    ">
+                        NADA
+                    </span>
+
+                    <span style="
+                        font-weight:800;
+                        font-size:1.6rem;
+                        letter-spacing:1.5px;
+                        color:#ffab96;
+                    ">
+                        BRIDA
+                    </span>
+                </div>
+            '))
+
+            ->brandLogo(null)
+
             ->colors([
-                'primary' => '#ffab96', // Ganti ke warna favorit lo
-                'danger' => \Filament\Support\Colors\Color::Rose,
-                'info' => \Filament\Support\Colors\Color::Blue,
-                'success' => \Filament\Support\Colors\Color::Emerald,
-                'warning' => \Filament\Support\Colors\Color::Orange,
+                'primary' => '#ffab96',
+                'danger' => Color::Rose,
+                'info' => Color::Blue,
+                'success' => Color::Emerald,
+                'warning' => Color::Orange,
             ])
-            ->font('Poppins') // Pakai font yang lebih bersih
-            ->favicon(asset('images/favicon.png'))
+
+            ->font('Poppins')
+            ->favicon(asset('img/favicon.png'))
+            ->renderHook(
+                'panels::head.end',
+                fn () => '<link rel="stylesheet" href="' . asset('css/theme.css') . '">'
+            )
 
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
             ->pages([Dashboard::class])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
-            ->widgets([AccountWidget::class, FilamentInfoWidget::class, \App\Filament\Admin\Widgets\ArsipStats::class, \App\Filament\Admin\Widgets\ArsipChart::class, \App\Filament\Admin\Widgets\ArsipTerbaru::class])
-            ->middleware([EncryptCookies::class, AddQueuedCookiesToResponse::class, StartSession::class, AuthenticateSession::class, ShareErrorsFromSession::class, VerifyCsrfToken::class, SubstituteBindings::class, DisableBladeIconComponents::class, DispatchServingFilamentEvent::class])
-            ->authMiddleware([Authenticate::class]);
+
+            ->middleware([
+                EncryptCookies::class,
+                AddQueuedCookiesToResponse::class,
+                StartSession::class,
+                AuthenticateSession::class,
+                ShareErrorsFromSession::class,
+                VerifyCsrfToken::class,
+                SubstituteBindings::class,
+                DisableBladeIconComponents::class,
+                DispatchServingFilamentEvent::class,
+            ])
+
+            ->authMiddleware([
+                Authenticate::class
+            ])
+            ->globalSearch(false); // Search kanan atas langsung ilang
     }
 }

@@ -13,27 +13,44 @@ class EditArsip extends EditRecord
     protected static string $resource = ArsipResource::class;
 
     // 1. Mencegah Pegawai nembak URL edit secara manual
-    public function mount(int | string $record): void
-    {
-        parent::mount($record);
+    // public function mount(int | string $record): void
+    // {
+    //     $user = auth::user();
+    //     $recordData = $this->getRecord(); // Ambil data arsip yang mau diedit
 
-        if (auth::user()->role === 'pegawai') {
-            Notification::make()
-                ->title('Akses Ditolak')
-                ->body('Pegawai tidak diizinkan mengubah data.')
-                ->danger()
-                ->send();
+    //     if ($user->role === 'pegawai') {
+    //     // Cek: Apakah ini miliknya DAN apakah statusnya Private?
+    //     // Catatan: Pastikan kolom di DB namanya 'tingkat' dan isinya 'Private'
+    //     $isOwner = $recordData->created_by === $user->id;
+    //     $isPrivate = $recordData->tingkat === 'Private';
 
-            $this->redirect($this->getResource()::getUrl('index'));
-        }
-    }
+    //     if (!($isOwner && $isPrivate)) {
+    //         Notification::make()
+    //             ->title('Akses Ditolak')
+    //             ->body('Anda hanya boleh mengubah arsip Private milik sendiri.')
+    //             ->danger()
+    //             ->send();
+
+    //         $this->redirect($this->getResource()::getUrl('index'));
+    //         }
+    //     }
+    // }
 
     // 2. Menghilangkan tombol Delete di halaman Edit
     protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn () => in_array(auth::user()->role, ['admin', 'operator'])),
+                ->visible(function ($record) {
+                $user = auth::user();
+
+                if (in_array($user->role, ['admin', 'operator'])) {
+                    return true;
+                }
+
+                // Logika yang sama: Milik sendiri & statusnya Rahasia
+                return $record->created_by === $user->id && $record->tingkat === 'Private';
+            }),
         ];
     }
 }

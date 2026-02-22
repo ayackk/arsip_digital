@@ -23,26 +23,15 @@ class ArsipsTable
             ->columns([
                 TextColumn::make('judul_arsip')->searchable()->sortable(),
                 TextColumn::make('tanggal_naskah')->date()->sortable(),
-                TextColumn::make('opd.nama_opd')->label('OPD'),
                 TextColumn::make('unitPengolah.nama_unit')->label('Unit'),
                 TextColumn::make('jenisArsip.nama_jenis')->label('Kategori'),
-                TextColumn::make('penyimpanan.nama_ruangan')
-                    ->label('Tempat Penyimpanan')
-                    ->formatStateUsing(function ($record) {
-                        if (!$record->penyimpanan) {
-                            return '-';
-                        }
-
-                        return "{$record->penyimpanan->nama_ruangan} | Lemari {$record->penyimpanan->posisi_lemari} | Rak {$record->penyimpanan->posisi_rak} | Baris {$record->penyimpanan->baris}";
-                    })
-                    ->searchable(),
                 TextColumn::make('lokasi_file')
                     ->label('File')
                     ->icon('heroicon-m-document-text')
                     ->color('primary')
                     ->formatStateUsing(fn($state) => collect($state)->map(fn($path) => basename($path))->implode(', ')),
                 TextColumn::make('lokasi_foto')
-                    ->label('Media')
+                    ->label('Media Pendukung')
                     ->icon('heroicon-m-photo')
                     ->color('warning')
                     ->formatStateUsing(fn($state) => collect($state)->map(fn($path) => basename($path))->implode(', ')),
@@ -53,12 +42,35 @@ class ArsipsTable
                 ViewAction::make(),
                 EditAction::make()
                     // Tombol Edit cuma muncul buat admin & operator
-                    ->visible(fn ($record) => in_array(auth::user()->role, ['admin', 'operator'])),
+                    ->visible(function ($record) {
+                    $user = auth::user();
+
+                    // 1. Admin & Operator bebas hapus apa saja
+                    if (in_array($user->role, ['admin', 'operator'])) {
+                        return true;
+                    }
+
+                    // 2. Pegawai cuma bisa hapus kalau itu arsip "Rahasia" miliknya sendiri
+                    // Kita cek kolom 'tingkat_id' atau 'tingkat' sesuai database
+                    return $record->created_by === $user->id && $record->tingkat === 'Private';
+                    }),
 
                 DeleteAction::make()
                 // Tombol Delete cuma muncul buat admin & operator
-                ->visible(fn () => in_array(auth::user()->role, ['admin', 'operator'])),
-                  Action::make('download_media')
+                    ->visible(function ($record) {
+                    $user = auth::user();
+
+                    // 1. Admin & Operator bebas hapus apa saja
+                    if (in_array($user->role, ['admin', 'operator'])) {
+                        return true;
+                    }
+
+                    // 2. Pegawai cuma bisa hapus kalau itu arsip "Rahasia" miliknya sendiri
+                    // Kita cek kolom 'tingkat_id' atau 'tingkat' sesuai database
+                    return $record->created_by === $user->id && $record->tingkat === 'Private';
+                    }),
+
+                Action::make('download_media')
                     ->label('Download Media')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('success')

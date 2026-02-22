@@ -61,7 +61,10 @@ public static function getEloquentQuery(): Builder
     }
 
     // Filter Hak Akses (Jangan jalan di halaman Create/Edit biar gak bug)
-    if (!request()->routeIs('filament.admin.resources.arsips.create', 'filament.admin.resources.arsips.edit')) {
+    if (request()->routeIs('filament.admin.resources.arsips.edit', 'filament.admin.resources.arsips.create')) {
+        return $query;
+        }
+     {
         $query->where(function ($q) use ($user) {
             $q->where('tingkat', 'Public')
               ->orWhere(function ($sub) use ($user) {

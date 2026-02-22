@@ -30,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName(new \Illuminate\Support\HtmlString('
                 <div style="display:inline-flex; align-items:center; gap:10px; white-space:nowrap;">
                     <img src="'.asset('img/logo.png').'" alt="Logo" style="height:2.4rem; width:auto; flex-shrink:0; max-width:none;">
-                    
+
                     <span style="
                         font-weight:800;
                         font-size:1.6rem;
@@ -38,15 +38,6 @@ class AdminPanelProvider extends PanelProvider
                         color:#ffab200;
                     ">
                         NADA
-                    </span>
-
-                    <span style="
-                        font-weight:800;
-                        font-size:1.6rem;
-                        letter-spacing:1.5px;
-                        color:#ffab96;
-                    ">
-                        BRIDA
                     </span>
                 </div>
             '))

@@ -55,6 +55,10 @@ public static function getEloquentQuery(): Builder
     $query = parent::getEloquentQuery();
     $user = Auth::user();
 
+    if ($user->role === 'admin') {
+        return $query;
+    }
+
     // Filter Role Operator
     if ($user->role === 'operator') {
         $query->where('opd_id', $user->opd_id);
